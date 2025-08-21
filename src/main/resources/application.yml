@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: webflux-gateway
+
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/appdb}
+
+  r2dbc:
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/appdb}
+    username: ${R2DBC_USERNAME:appuser}
+    password: ${R2DBC_PASSWORD:apppass}
+
+app:
+  fastapi:
+    base-url: ${FASTAPI_BASE_URL:http://localhost:8000}
+  uploads:
+    dir: ${UPLOAD_DIR:/tmp/uploads}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
