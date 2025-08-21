@@ -1,26 +1,36 @@
 package com.example.gateway.api.auth;
 
 import com.example.gateway.api.dto.AuthDtos;
-import com.example.gateway.application.auth.AuthServiceStub;
+import com.example.gateway.application.auth.AuthServiceAzure;
+import com.example.gateway.application.auth.AuthServiceAzure.AuthResult;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthServiceStub authServiceStub;
+    private final AuthServiceAzure authService; // ✅ Azure 연동 서비스 사용
 
-    public AuthController(AuthServiceStub authServiceStub) {
-        this.authServiceStub = authServiceStub;
+    public AuthController(AuthServiceAzure authService) {
+        this.authService = authService;
     }
 
     @PostMapping
-    public Mono<AuthDtos.AuthResponse> auth(@Valid @RequestBody AuthDtos.AuthRequest req) {
-        return authServiceStub.authenticate(req.authenticationCode);
+    public Mono<ResponseEntity<AuthDtos.AuthResponse>> auth(@Valid @RequestBody AuthDtos.AuthRequest req) {
+
+        return authService.authenticateAndIssueJwt(req.authenticationCode, null)
+                .map(this::toResponseEntityWithAuthHeader);
+    }
+
+    private ResponseEntity<AuthDtos.AuthResponse> toResponseEntityWithAuthHeader(AuthResult result) {
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + result.jwt)
+                .header("Access-Control-Expose-Headers", HttpHeaders.AUTHORIZATION)
+                .body(result.body);
     }
 }

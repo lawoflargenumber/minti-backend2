@@ -23,26 +23,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.postgresql:r2dbc-postgresql'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-
-    // ✅ Lombok 버전 명시
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compileOnly 'org.projectlombok:lombok:1.18.32'
-    // annotationProcessor 'org.projectlombok:lombok:1.18.32'
-
-    // Azure BOM은 Groovy DSL에서도 platform(...)로 import 가능합니다.
     implementation platform('com.azure.spring:spring-cloud-azure-dependencies:5.23.0')
     implementation 'com.azure:azure-storage-blob'
-
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0'
-}
-
-// Lombok annotationProcessor를 compileOnly에도 인식시키는 편의 설정
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 test {

@@ -19,7 +19,6 @@ public class SidebarController {
 
     @GetMapping
     public Mono<SidebarDtos.SidebarResponse> getSidebar() {
-        // stub user
         return sidebarService.getSidebar("test-user-id");
     }
 }

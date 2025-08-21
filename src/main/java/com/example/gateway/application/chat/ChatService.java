@@ -3,10 +3,13 @@ package com.example.gateway.application.chat;
 import com.example.gateway.api.dto.ChatDtos;
 import com.example.gateway.domain.chat.Chat;
 import com.example.gateway.domain.chat.ChatMessage;
+import com.example.gateway.application.auth.JwtService;
 import com.example.gateway.infra.fastapi.FastApiClient;
 import com.example.gateway.infra.mongo.ChatRepository;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import io.jsonwebtoken.Claims;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,18 +17,39 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import static com.example.gateway.application.ids.Ids.newId;
-
 @Service
 public class ChatService {
+    private final JwtService jwtService;
 
     private final ChatRepository chatRepository;
     private final FastApiClient fastApiClient;
 
-    public ChatService(ChatRepository chatRepository, FastApiClient fastApiClient) {
+    public ChatService(ChatRepository chatRepository, FastApiClient fastApiClient, JwtService jwtService) {
         this.chatRepository = chatRepository;
         this.fastApiClient = fastApiClient;
+        this.jwtService = jwtService;
+    }
+
+    private record UserCtx(String userId, String company) {}
+
+    private Mono<UserCtx> currentUser() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(ctx -> {
+                var auth = ctx.getAuthentication();
+                if (auth == null) throw new IllegalStateException("Unauthenticated");
+                String userId = auth.getName(); 
+                String company = "Unknown";
+    
+                Object creds = auth.getCredentials();
+                if (creds != null) {
+                    try {
+                        Claims claims = jwtService.parse(String.valueOf(creds));
+                        String c = claims.get("company", String.class);
+                        if (c != null && !c.isBlank()) company = c;
+                    } catch (Exception ignore) {}
+                }
+                return new UserCtx(userId, company);
+            });
     }
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -66,9 +90,10 @@ public class ChatService {
     }
 
     public Flux<ServerSentEvent<String>> newChat(String userMessage) {
-        return fastApiClient.streamNewChat(userMessage, "test-user-id", "Test Company")
-                .doOnNext(sse -> {
-                    String ev = sse.event();
+        return currentUser().flatMapMany(uc ->
+        fastApiClient.streamNewChat(userMessage, uc.userId(), uc.company()))
+        .doOnNext(sse -> {
+                     String ev = sse.event();
                     String data = sse.data();
                     if ("chunk".equals(ev)) {
                         System.out.println("[GW->FE] OUT event=chunk dataPreview=" + clip(data, 200));
@@ -83,7 +108,7 @@ public class ChatService {
      }
 
     public Flux<ServerSentEvent<String>> continueChat(String chatId, String message) {
-        return fastApiClient.streamChat(chatId, message, "test-user-id", "Test Company")
+        return currentUser().flatMapMany(uc ->fastApiClient.streamChat(chatId, message, uc.userId(), uc.company()))
                 .doOnNext(sse -> {
                     String ev = sse.event();
                     String data = sse.data();

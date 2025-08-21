@@ -2,7 +2,6 @@ package com.example.gateway.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Map;
 
 public class AuthDtos {
 
@@ -26,6 +25,9 @@ public class AuthDtos {
         public String userName;
         public String company;
         public String email;
+
+        public String token;
+
         public List<ChatSummary> chatList;
         public List<PlanSummary> planList;
     }
