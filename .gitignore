@@ -1,1 +1,75 @@
-/.DS_Store
+### Java ###
+*.class
+*.log
+*.ctxt
+hs_err_pid*
+replay_pid*
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### IDE ###
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+.apt_generated/
+.factorypath
+
+# VS Code
+.vscode/
+
+### OS ###
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+### Logs & Temp ###
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+### Spring Specific ###
+# Application local configs
+application-*.yml
+application-*.properties
+
+# Embedded server working directories
+spring.log
+
+### Others ###
+# Local test db or cache
+*.h2.db
+*.mv.db
+*.sqlite
+*.db
+
+# Security
+*.key
+*.pem
+*.p12

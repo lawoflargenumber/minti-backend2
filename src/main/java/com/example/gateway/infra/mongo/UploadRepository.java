@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 
 public interface UploadRepository extends ReactiveMongoRepository<Upload, String> {
-    Flux<Upload> findByPlan_id(String planId);
+    Flux<Upload> findByPlanId(String planId);
 }

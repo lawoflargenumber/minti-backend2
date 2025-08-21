@@ -20,13 +20,13 @@ public class ChatController {
     }
 
     @GetMapping("/title")
-    public Mono<ChatDtos.ChatTitleResponse> getTitle(@Valid @RequestBody ChatDtos.ChatIdRequest req) {
-        return chatService.getTitle(req.chatId);
+    public Mono<ChatDtos.ChatTitleResponse> getTitle(@RequestParam("chatId") String chatId) {
+        return chatService.getTitle(chatId);
     }
 
-    @GetMapping
-    public Mono<ChatDtos.ChatHistoryResponse> getHistory(@Valid @RequestBody ChatDtos.ChatGetRequest req) {
-        return chatService.getHistory(req.chatId);
+    @GetMapping("")
+    public Mono<ChatDtos.ChatHistoryResponse> getHistory(@RequestParam("chatId") String chatId) {
+        return chatService.getHistory(chatId);
     }
 
     @DeleteMapping("/{chatId}")

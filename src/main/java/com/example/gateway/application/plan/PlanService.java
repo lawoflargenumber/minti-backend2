@@ -25,7 +25,7 @@ public class PlanService {
 
     public Mono<PlanDtos.NewPlanResponse> newPlan() {
         Plan plan = new Plan();
-        plan.setPlan_id(newId());
+        plan.setPlanId(newId());
         plan.setUserId("test-user-id");
         plan.setTargetType("brand");
         plan.setCreatedAt(OffsetDateTime.now());
@@ -33,7 +33,7 @@ public class PlanService {
         return planRepository.save(plan)
                 .map(p -> {
                     var resp = new PlanDtos.NewPlanResponse();
-                    resp.planId = p.getPlan_id();
+                    resp.planId = p.getPlanId();
                     resp.type = p.getTargetType();
                     return resp;
                 });
@@ -44,7 +44,7 @@ public class PlanService {
                 .flatMap(map -> {
                     // persist to Mongo as Plan
                     Plan plan = new Plan();
-                    plan.setPlan_id((String) map.get("planId"));
+                    plan.setPlanId((String) map.get("planId"));
                     plan.setUserId("test-user-id");
                     // Determine targetType by presence of fields
                     String targetType = map.containsKey("couponSection") || map.containsKey("productSection") ? "brand" : "category";
@@ -70,7 +70,7 @@ public class PlanService {
                 .flatMap(map -> {
                     String planId = (String) map.get("planId");
                     String designUrl = (String) map.get("designUrl");
-                    return planRepository.findByPlan_id(planId)
+                    return planRepository.findByPlanId(planId)
                             .flatMap(p -> {
                                 p.setDesignUrl(designUrl);
                                 return planRepository.save(p);

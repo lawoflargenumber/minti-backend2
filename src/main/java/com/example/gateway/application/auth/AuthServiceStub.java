@@ -34,14 +34,14 @@ public class AuthServiceStub {
         var chatsMono = chatRepository.findByUserIdOrderByUpdatedAtDesc(userId).collectList()
                 .map(list -> list.stream().map(c -> {
                     var s = new AuthDtos.ChatSummary();
-                    s.chatId = c.getChat_id();
+                    s.chatId = c.getChatId();
                     s.title = c.getTitle();
                     return s;
                 }).collect(Collectors.toList()));
         var plansMono = planRepository.findByUserIdOrderByCreatedAtDesc(userId).collectList()
                 .map(list -> list.stream().map(p -> {
                     var s = new AuthDtos.PlanSummary();
-                    s.planId = p.getPlan_id();
+                    s.planId = p.getPlanId();
                     s.title = p.getTitle();
                     return s;
                 }).collect(Collectors.toList()));

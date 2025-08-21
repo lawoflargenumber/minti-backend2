@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ChatRepository extends ReactiveMongoRepository<Chat, String> {
-    Mono<Chat> findByChat_id(String chatId);
-    Mono<Void> deleteByChat_id(String chatId);
+    Mono<Chat> findByChatId(String chatId);
+    Mono<Void> deleteByChatId(String chatId);
     Flux<Chat> findByUserIdOrderByUpdatedAtDesc(String userId);
 }

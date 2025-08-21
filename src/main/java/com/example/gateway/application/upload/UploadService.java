@@ -34,7 +34,7 @@ public class UploadService {
 
     private Upload toUpload(String planId, String imageId, String filename, String path) {
         Upload u = new Upload();
-        u.setPlan_id(planId);
+        u.setPlanId(planId);
         u.setImageId(imageId);
         u.setFilename(filename);
         u.setPath(path);

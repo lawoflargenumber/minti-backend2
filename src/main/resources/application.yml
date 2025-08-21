@@ -2,22 +2,25 @@ server:
   port: 8080
 
 spring:
+  jackson:
+    time-zone: Asia/Seoul
+
   application:
     name: webflux-gateway
 
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/appdb}
+      uri: mongodb+srv://minti:aivle202507%21@minti-cosmos.global.mongocluster.cosmos.azure.com/minti?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000
 
   r2dbc:
-    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/appdb}
-    username: ${R2DBC_USERNAME:appuser}
-    password: ${R2DBC_PASSWORD:apppass}
+    url: r2dbc:postgresql://minti-postgre.postgres.database.azure.com:5432/postgres
+    username: minti
+    password: aivle202507!
 
 app:
   fastapi:
-    base-url: ${FASTAPI_BASE_URL:http://localhost:8000}
+    base-url: http://127.0.0.1:8000
   uploads:
     dir: ${UPLOAD_DIR:/tmp/uploads}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+    allowed-origins: http://localhost:3000

@@ -2,6 +2,7 @@ package com.example.gateway.domain.upload;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
 
@@ -10,7 +11,8 @@ public class Upload {
     @Id
     private String _id;
     private String imageId;
-    private String plan_id; // link by plan_id
+    @Field("plan_id")
+        private String planId; // link by plan_id
     private String filename;
     private String path;
     private OffsetDateTime createdAt;
@@ -21,8 +23,8 @@ public class Upload {
     public void set_id(String _id) { this._id = _id; }
     public String getImageId() { return imageId; }
     public void setImageId(String imageId) { this.imageId = imageId; }
-    public String getPlan_id() { return plan_id; }
-    public void setPlan_id(String plan_id) { this.plan_id = plan_id; }
+    public String getPlanId() { return planId; }
+    public void setPlanId(String planId) { this.planId = planId; }
     public String getFilename() { return filename; }
     public void setFilename(String filename) { this.filename = filename; }
     public String getPath() { return path; }

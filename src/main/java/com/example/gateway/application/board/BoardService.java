@@ -18,7 +18,7 @@ public class BoardService {
         return planRepository.findAll()
                 .map(p -> {
                     var b = new BoardDtos.BoardItem();
-                    b.planId = p.getPlan_id();
+                    b.planId = p.getPlanId();
                     b.title = p.getTitle();
                     b.url = p.getDesignUrl();
                     b.createdAt = p.getCreatedAt();
@@ -31,7 +31,7 @@ public class BoardService {
         return planRepository.findByTargetTypeOrderByCreatedAtDesc("brand")
                 .map(p -> {
                     var b = new BoardDtos.BoardItem();
-                    b.planId = p.getPlan_id();
+                    b.planId = p.getPlanId();
                     b.title = p.getTitle();
                     b.url = p.getDesignUrl();
                     b.createdAt = p.getCreatedAt();
@@ -44,7 +44,7 @@ public class BoardService {
         return planRepository.findByTargetTypeOrderByCreatedAtDesc("category")
                 .map(p -> {
                     var b = new BoardDtos.BoardItem();
-                    b.planId = p.getPlan_id();
+                    b.planId = p.getPlanId();
                     b.title = p.getTitle();
                     b.url = p.getDesignUrl();
                     b.createdAt = p.getCreatedAt();

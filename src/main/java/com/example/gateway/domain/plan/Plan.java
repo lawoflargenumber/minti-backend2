@@ -2,6 +2,7 @@ package com.example.gateway.domain.plan;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
 
@@ -9,7 +10,8 @@ import java.time.OffsetDateTime;
 public class Plan {
     @Id
     private String _id; // internal
-    private String plan_id; // external key
+    @Field("plan_id")
+        private String planId; // external key
     private String userId;
     private String targetType; // "brand" | "category"
 
@@ -37,8 +39,8 @@ public class Plan {
     // getters/setters
     public String get_id() { return _id; }
     public void set_id(String _id) { this._id = _id; }
-    public String getPlan_id() { return plan_id; }
-    public void setPlan_id(String plan_id) { this.plan_id = plan_id; }
+    public String getPlanId() { return planId; }
+    public void setPlanId(String planId) { this.planId = planId; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
     public String getTargetType() { return targetType; }

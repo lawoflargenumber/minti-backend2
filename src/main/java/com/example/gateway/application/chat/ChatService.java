@@ -12,6 +12,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import static com.example.gateway.application.ids.Ids.newId;
 
@@ -26,8 +28,15 @@ public class ChatService {
         this.fastApiClient = fastApiClient;
     }
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    
+    private static String json(Map<String, Object> map) {
+        try { return MAPPER.writeValueAsString(map); }
+        catch (Exception e) { return "{\"type\":\"error\",\"content\":{\"message\":\"json_serialize_failed\"}}"; }
+    }
+
     public Mono<ChatDtos.ChatTitleResponse> getTitle(String chatId) {
-        return chatRepository.findByChat_id(chatId)
+        return chatRepository.findByChatId(chatId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("chatId not found")))
                 .map(c -> {
                     var resp = new ChatDtos.ChatTitleResponse();
@@ -37,11 +46,11 @@ public class ChatService {
     }
 
     public Mono<ChatDtos.ChatHistoryResponse> getHistory(String chatId) {
-        return chatRepository.findByChat_id(chatId)
+        return chatRepository.findByChatId(chatId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("chatId not found")))
                 .map(c -> {
                     var resp = new ChatDtos.ChatHistoryResponse();
-                    resp.chatId = c.getChat_id();
+                    resp.chatId = c.getChatId();
                     resp.messages = c.getMessages().stream().map(m -> {
                         var dto = new ChatDtos.Message();
                         dto.speaker = m.getSpeaker();
@@ -53,36 +62,46 @@ public class ChatService {
     }
 
     public Mono<Void> deleteChat(String chatId) {
-        return chatRepository.deleteByChat_id(chatId);
+        return chatRepository.deleteByChatId(chatId);
     }
 
     public Flux<ServerSentEvent<String>> newChat(String userMessage) {
-        String chatId = newId();
-        Chat chat = new Chat();
-        chat.setChat_id(chatId);
-        chat.setUserId("test-user-id"); // stub
-        chat.setTitle(userMessage.length() > 30 ? userMessage.substring(0,30) : userMessage);
-        chat.setCreatedAt(OffsetDateTime.now());
-        chat.setUpdatedAt(OffsetDateTime.now());
-        chat.getMessages().add(new ChatMessage("user", userMessage, OffsetDateTime.now()));
-
-        return chatRepository.save(chat)
-                .thenMany(Flux.concat(
-                    Flux.just(ServerSentEvent.<String>builder().event("chat_id").data("{"type":"chat_id","content":"" + chatId + ""}").build()),
-                    fastApiClient.streamNewChat(userMessage, "test-user-id", "Test Company")
-                ))
-                .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder().event("error").data("{"type":"error","content":{"message":"" + ex.getMessage() + ""}}").build()));
-    }
+        return fastApiClient.streamNewChat(userMessage, "test-user-id", "Test Company")
+                .doOnNext(sse -> {
+                    String ev = sse.event();
+                    String data = sse.data();
+                    if ("chunk".equals(ev)) {
+                        System.out.println("[GW->FE] OUT event=chunk dataPreview=" + clip(data, 200));
+                    } else {
+                        System.out.println("[GW->FE] OUT event=" + ev + " len=" + (data != null ? data.length() : 0));
+                    }
+                })
+                .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder()
+                        .event("error")
+                        .data(json(Map.of("type","error","content", Map.of("message", ex.getMessage()))))
+                        .build()));
+     }
 
     public Flux<ServerSentEvent<String>> continueChat(String chatId, String message) {
-        return chatRepository.findByChat_id(chatId)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("chatId not found")))
-                .flatMapMany(chat -> {
-                    chat.getMessages().add(new ChatMessage("user", message, OffsetDateTime.now()));
-                    chat.setUpdatedAt(OffsetDateTime.now());
-                    return chatRepository.save(chat)
-                            .thenMany(fastApiClient.streamChat(chat.getChat_id(), message, "test-user-id", "Test Company"));
+        return fastApiClient.streamChat(chatId, message, "test-user-id", "Test Company")
+                .doOnNext(sse -> {
+                    String ev = sse.event();
+                    String data = sse.data();
+                    if ("chunk".equals(ev)) {
+                        System.out.println("[GW->FE] OUT chatId=" + chatId + " event=chunk dataPreview=" + clip(data, 200));
+                    } else {
+                        System.out.println("[GW->FE] OUT chatId=" + chatId + " event=" + ev + " len=" + (data != null ? data.length() : 0));
+                    }
                 })
-                .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder().event("error").data("{"type":"error","content":{"message":"" + ex.getMessage() + ""}}").build()));
+                .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder()
+                        .event("error")
+                        .data(json(Map.of("type","error","content", Map.of("message", ex.getMessage()))))
+                        .build()));
+                    }
+
+    private static String clip(String s, int max) {
+        if (s == null) return "";
+        if (s.length() <= max) return s;
+        return s.substring(0, max) + "...";
     }
 }
