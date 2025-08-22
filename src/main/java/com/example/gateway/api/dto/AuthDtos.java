@@ -26,8 +26,6 @@ public class AuthDtos {
         public String company;
         public String email;
 
-        public String token;
-
         public List<ChatSummary> chatList;
         public List<PlanSummary> planList;
     }
