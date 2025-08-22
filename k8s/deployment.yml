@@ -17,10 +17,14 @@ spec:
         image: minitiacr.azurecr.io/spring:v1
         ports:
         - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: minti-backend-secrets
+        - configMapRef:
+            name: minti-backend-configmap
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "prod"
-        
         resources:
           requests:
             memory: "512Mi"
