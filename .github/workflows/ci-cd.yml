@@ -41,14 +41,8 @@ jobs:
         run: |
           kubectl create secret generic minti-backend-secrets \
             --from-literal=SPRING_DATA_MONGODB_URI='${{ secrets.SPRING_DATA_MONGODB_URI }}' \
-            --from-literal=SPRING_R2DBC_URL='${{ secrets.SPRING_R2DBC_URL }}' \
             --from-literal=SPRING_R2DBC_PASSWORD='${{ secrets.SPRING_R2DBC_PASSWORD }}' \
-            --from-literal=APP_AUTH_AZURE_TENANT_ID='${{ secrets.APP_AUTH_AZURE_TENANT_ID }}' \
-            --from-literal=APP_AUTH_AZURE_CLIENT_ID='${{ secrets.APP_AUTH_AZURE_CLIENT_ID }}' \
             --from-literal=APP_AUTH_AZURE_CLIENT_SECRET='${{ secrets.APP_AUTH_AZURE_CLIENT_SECRET }}' \
-            --from-literal=APP_AUTH_AZURE_TOKEN_URI='${{ secrets.APP_AUTH_AZURE_TOKEN_URI }}' \
-            --from-literal=APP_AUTH_AZURE_ISSUER='${{ secrets.APP_AUTH_AZURE_ISSUER }}' \
-            --from-literal=APP_AUTH_AZURE_JWKS_URI='${{ secrets.APP_AUTH_AZURE_JWKS_URI }}' \
             --from-literal=APP_SECURITY_JWT_SECRET='${{ secrets.APP_SECURITY_JWT_SECRET }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
@@ -56,6 +50,7 @@ jobs:
         uses: Azure/k8s-deploy@v4
         with:
           manifests: |
+            k8s/configmap.yml
             k8s/deployment.yml
             k8s/service.yml
           images: |
