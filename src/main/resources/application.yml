@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   jackson:
@@ -10,36 +10,33 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://minti:aivle202507%21@minti-cosmos.global.mongocluster.cosmos.azure.com/minti?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000
+      uri: ${SPRING_DATA_MONGODB_URI}
 
   r2dbc:
-    url: r2dbc:postgresql://minti-postgre.postgres.database.azure.com:5432/postgres
-    username: minti
-    password: aivle202507!
+    url: ${SPRING_R2DBC_URL}
+    username: ${SPRING_R2DBC_USERNAME}
+    password: ${SPRING_R2DBC_PASSWORD}
 
 app:
   fastapi:
-    base-url: http://127.0.0.1:8000
+    base-url: ${APP_FASTAPI_BASE_URL}
   uploads:
     dir: ${UPLOAD_DIR:/tmp/uploads}
   cors:
-    allowed-origins: http://localhost:3000
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:}
 
   auth:
     azure:
-      tenant-id: "a8b5b521-af3e-494c-9d73-78025baff26b"
-      client-id: "e7b7ab7a-a770-413f-8053-069446fda0bb"   
-      client-secret: "JAR8Q~xrmI2Ek.nXvM-qvHMFlE9HejjgqLB1ncax"             
-      redirect-uri: "http://localhost:3000/auth/callback"  
-
-      # authorize와 동일한 베이스 도메인으로 통일 (오탈자 주의)
-      token-uri: "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/oauth2/v2.0/token"
-      issuer:    "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/v2.0"
-      jwks-uri:  "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/discovery/v2.0/keys"
-
+      tenant-id: ${APP_AUTH_AZURE_TENANT_ID}
+      client-id: ${APP_AUTH_AZURE_CLIENT_ID}
+      client-secret: ${APP_AUTH_AZURE_CLIENT_SECRET}
+      redirect-uri: ${APP_AUTH_AZURE_REDIRECT_URI}
+      token-uri: ${APP_AUTH_AZURE_TOKEN_URI}
+      issuer: ${APP_AUTH_AZURE_ISSUER}
+      jwks-uri: ${APP_AUTH_AZURE_JWKS_URI}
 
   security:
     jwt:
-      issuer: "webflux-gateway"                    
-      secret: "30a6c9dc4e194ebfa84aa90c926a5b7e1a4bd819c9ee4a1485ccd91011b94cb8"
-      expires-minutes: 60                           
+      issuer: ${APP_SECURITY_JWT_ISSUER:webflux-gateway}
+      secret: ${APP_SECURITY_JWT_SECRET}
+      expires-minutes: ${APP_SECURITY_JWT_EXPIRES_MINUTES:60}
