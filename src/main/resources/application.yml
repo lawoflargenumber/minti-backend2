@@ -27,14 +27,16 @@ app:
 
   auth:
     azure:
-      tenant-id: "{YOUR_TENANT_ID}"        
-      client-id: "e3d4b650-b562-4d6e-b248-cef599b6ecb1"    
-      client-secret: "z4d8Q~NkQlD8q-..3Dd80CrmoeWoyOnZvdmQ9cI7" 
-      redirect-uri: "http://localhost:3000/api/auth/callback"  
+      tenant-id: "a8b5b521-af3e-494c-9d73-78025baff26b"
+      client-id: "e7b7ab7a-a770-413f-8053-069446fda0bb"   
+      client-secret: "JAR8Q~xrmI2Ek.nXvM-qvHMFlE9HejjgqLB1ncax"             
+      redirect-uri: "http://localhost:3000/auth/callback"  
 
-      token-uri: "https://a8b5b521-af3e-494c-9d73-78025baff26b.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/oauth2/v2.0/token"
-      issuer:   "https://a8b5b521-af3e-494c-9d73-78025baff26b.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/v2.0"
-      jwks-uri: "https://a8b5b521-af3e-494c-9d73-78025baff26b.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/discovery/v2.0/keys"
+      # authorize와 동일한 베이스 도메인으로 통일 (오탈자 주의)
+      token-uri: "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/oauth2/v2.0/token"
+      issuer:    "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/v2.0"
+      jwks-uri:  "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/discovery/v2.0/keys"
+
 
   security:
     jwt:

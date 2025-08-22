@@ -8,6 +8,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.Map;
 @Service
 public class JwtService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+    
     private final String issuer;
     private final long expiresMinutes;
     private final Key key;
@@ -33,9 +37,12 @@ public class JwtService {
         this.issuer = issuer;
         this.expiresMinutes = expiresMinutes;
         this.key = buildKey(secret);
+        logger.info("🔧 JWT 서비스 초기화 완료 - issuer: {}, expiresMinutes: {}", issuer, expiresMinutes);
     }
 
     public String issueToken(String subjectUserId, Map<String, Object> extraClaims) {
+        logger.info("🔑 JWT 토큰 발급 시작 - userId: {}, extraClaims 개수: {}", subjectUserId, extraClaims != null ? extraClaims.size() : 0);
+        
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(expiresMinutes * 60);
 
@@ -46,12 +53,16 @@ public class JwtService {
                 .setExpiration(Date.from(exp));
 
         if (extraClaims != null && !extraClaims.isEmpty()) {
+            logger.info("📝 JWT 토큰에 추가 클레임 설정 - claims: {}", extraClaims.keySet());
             builder.addClaims(extraClaims);
         }
 
-        return builder
+        String token = builder
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+        
+        logger.info("✅ JWT 토큰 발급 완료 - userId: {}, 만료시간: {}", subjectUserId, exp);
+        return token;
     }
 
     private static Key buildKey(String secret) {
