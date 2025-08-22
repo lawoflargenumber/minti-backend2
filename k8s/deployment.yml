@@ -6,15 +6,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mintti-backend-app
+      app: minti-backend-app
   template:
     metadata:
       labels:
-        app: mintti-backend-app
+        app: minti-backend-app
     spec:
       containers:
-      - name: mintti-backend-container
-        image: mintiacr.azurecr.io/spring:v1
+      - name: minti-backend-container
+        image: minitiacr.azurecr.io/spring:v1
         ports:
         - containerPort: 8080
         env:
