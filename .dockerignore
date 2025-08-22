@@ -6,5 +6,6 @@ node_modules
 **/.idea
 **/.vscode
 .DS_Store
+.github
 k8s
 application-local.yml
