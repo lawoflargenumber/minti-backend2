@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minti-backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mintti-backend-app
+  template:
+    metadata:
+      labels:
+        app: mintti-backend-app
+    spec:
+      containers:
+      - name: mintti-backend-container
+        image: mintiacr.azurecr.io/spring:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m" 
+          limits:
+            memory: "1Gi"
+            cpu: "750m" 

@@ -2,43 +2,16 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: local
+
   jackson:
     time-zone: Asia/Seoul
 
   application:
     name: webflux-gateway
 
-  data:
-    mongodb:
-      uri: mongodb+srv://minti:aivle202507%21@minti-cosmos.global.mongocluster.cosmos.azure.com/minti?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000
-
-  r2dbc:
-    url: r2dbc:postgresql://minti-postgre.postgres.database.azure.com:5432/postgres
-    username: minti
-    password: aivle202507!
-
-app:
-  fastapi:
-    base-url: http://127.0.0.1:8000
-  uploads:
-    dir: ${UPLOAD_DIR:/tmp/uploads}
-  cors:
-    allowed-origins: http://localhost:3000
-
-  auth:
-    azure:
-      tenant-id: "a8b5b521-af3e-494c-9d73-78025baff26b"
-      client-id: "e7b7ab7a-a770-413f-8053-069446fda0bb"   
-      client-secret: "JAR8Q~xrmI2Ek.nXvM-qvHMFlE9HejjgqLB1ncax"             
-      redirect-uri: "http://localhost:3000/auth/callback"  
-
-      token-uri: "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/oauth2/v2.0/token"
-      issuer:    "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/v2.0"
-      jwks-uri:  "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/discovery/v2.0/keys"
-
-
   security:
     jwt:
       issuer: "webflux-gateway"                    
-      secret: "30a6c9dc4e194ebfa84aa90c926a5b7e1a4bd819c9ee4a1485ccd91011b94cb8"
-      expires-minutes: 60                           
+      expires-minutes: 60

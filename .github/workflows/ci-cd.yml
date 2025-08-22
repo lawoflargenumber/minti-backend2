@@ -1,0 +1,64 @@
+name: Deploy Minti Backend App to AKS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_RESOURCE_GROUP: "rg-market-ai-agent"
+  AZURE_ACR_NAME: "minitiacr"
+  AZURE_AKS_CLUSTER_NAME: "minti-aks"
+  IMAGE_REPOSITORY_NAME: "spring"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        run: az acr login --name $AZURE_ACR_NAME
+
+      - name: Build and push Docker image to ACR
+        run: |
+          docker build . -t ${{ env.AZURE_ACR_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY_NAME }}:${{ github.sha }}
+          docker push ${{ env.AZURE_ACR_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY_NAME }}:${{ github.sha }}
+
+      - name: Set AKS context
+        uses: azure/aks-set-context@v3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster-name: $AZURE_AKS_CLUSTER_NAME
+          resource-group: $AZURE_RESOURCE_GROUP
+
+      - name: Create Kubernetes Secrets
+        run: |
+          kubectl create secret generic minti-backend-secrets \
+            --from-literal=SPRING_DATA_MONGODB_URI='${{ secrets.SPRING_DATA_MONGODB_URI }}' \
+            --from-literal=SPRING_R2DBC_URL='${{ secrets.SPRING_R2DBC_URL }}' \
+            --from-literal=SPRING_R2DBC_PASSWORD='${{ secrets.SPRING_R2DBC_PASSWORD }}' \
+            --from-literal=APP_AUTH_AZURE_TENANT_ID='${{ secrets.APP_AUTH_AZURE_TENANT_ID }}' \
+            --from-literal=APP_AUTH_AZURE_CLIENT_ID='${{ secrets.APP_AUTH_AZURE_CLIENT_ID }}' \
+            --from-literal=APP_AUTH_AZURE_CLIENT_SECRET='${{ secrets.APP_AUTH_AZURE_CLIENT_SECRET }}' \
+            --from-literal=APP_AUTH_AZURE_TOKEN_URI='${{ secrets.APP_AUTH_AZURE_TOKEN_URI }}' \
+            --from-literal=APP_AUTH_AZURE_ISSUER='${{ secrets.APP_AUTH_AZURE_ISSUER }}' \
+            --from-literal=APP_AUTH_AZURE_JWKS_URI='${{ secrets.APP_AUTH_AZURE_JWKS_URI }}' \
+            --from-literal=APP_SECURITY_JWT_SECRET='${{ secrets.APP_SECURITY_JWT_SECRET }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy to AKS
+        uses: Azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/deployment.yml
+            k8s/service.yml
+          images: |
+            ${{ env.AZURE_ACR_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY_NAME }}:${{ github.sha }}
+          namespace: 'default'
