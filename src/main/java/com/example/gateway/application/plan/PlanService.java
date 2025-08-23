@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.example.gateway.application.ids.Ids.newId;
 
@@ -23,45 +24,22 @@ public class PlanService {
         this.fastApiClient = fastApiClient;
     }
 
-    public Mono<PlanDtos.NewPlanResponse> newPlan() {
+    public Mono<PlanDtos.NewPlanResponse> newPlan(String type, String company) {
         Plan plan = new Plan();
-        plan.setPlanId(newId());
-        plan.setUserId("test-user-id");
-        plan.setTargetType("brand");
+        plan.setPlanId(UUID.randomUUID().toString().replace("-", "")); // UUID4 without hyphens
+        plan.setTargetType(type);
+        plan.setCompany(company);
         plan.setCreatedAt(OffsetDateTime.now());
-        plan.setTitle("Untitled Plan");
+        plan.setLastUpdatedAt(OffsetDateTime.now());
+        plan.setPlanContent("{}"); // 빈 JSON
+        plan.setShare(false); // 기본값 false
+        
         return planRepository.save(plan)
                 .map(p -> {
                     var resp = new PlanDtos.NewPlanResponse();
                     resp.planId = p.getPlanId();
                     resp.type = p.getTargetType();
                     return resp;
-                });
-    }
-
-    public Mono<Object> createPlanFromChat(String chatId) {
-        return fastApiClient.createPlanFromChat(chatId)
-                .flatMap(map -> {
-                    // persist to Mongo as Plan
-                    Plan plan = new Plan();
-                    plan.setPlanId((String) map.get("planId"));
-                    plan.setUserId("test-user-id");
-                    // Determine targetType by presence of fields
-                    String targetType = map.containsKey("couponSection") || map.containsKey("productSection") ? "brand" : "category";
-                    plan.setTargetType(targetType);
-                    plan.setTitle((String) map.get("title"));
-                    plan.setMainBanner((String) map.get("mainBanner"));
-                    if ("brand".equals(targetType)) {
-                        plan.setCouponSection((String) map.get("couponSection"));
-                        plan.setProductSection((String) map.get("productSection"));
-                        plan.setEventNotes((String) map.get("eventNotes"));
-                    } else {
-                        plan.setSection1((String) map.get("section1"));
-                        plan.setSection2((String) map.get("section2"));
-                        plan.setSection3((String) map.get("section3"));
-                    }
-                    plan.setCreatedAt(OffsetDateTime.now());
-                    return planRepository.save(plan).thenReturn(map);
                 });
     }
 
@@ -72,8 +50,9 @@ public class PlanService {
                     String designUrl = (String) map.get("designUrl");
                     return planRepository.findByPlanId(planId)
                             .flatMap(p -> {
-                                p.setDesignUrl(designUrl);
-                                return planRepository.save(p);
+                                // plan_content에 designUrl 정보를 추가하거나 별도 필드로 저장
+                                // 현재는 단순히 응답만 반환
+                                return Mono.empty();
                             })
                             .then(Mono.fromSupplier(() -> {
                                 var resp = new PlanDtos.DesignResponse();
@@ -88,10 +67,9 @@ public class PlanService {
         return planRepository.findByPlanId(planId)
                 .map(p -> {
                     var resp = new PlanDtos.PlanResponse();
-                    resp.title = p.getTitle();
                     resp.targetType = p.getTargetType();
                     resp.createdAt = p.getCreatedAt();
-                    resp.url = p.getDesignUrl();
+                    resp.url = p.getUrl();
                     return resp;
                 });
     }

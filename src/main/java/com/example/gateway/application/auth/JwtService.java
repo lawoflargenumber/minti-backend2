@@ -103,4 +103,14 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public String extractCompany(String token) {
+        try {
+            Claims claims = parse(token);
+            return claims.get("company", String.class);
+        } catch (JwtException e) {
+            logger.warn("JWT 토큰에서 company 정보 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
 }

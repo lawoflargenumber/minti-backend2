@@ -1,7 +1,9 @@
 package com.example.gateway.api.plan;
 
 import com.example.gateway.api.dto.PlanDtos;
+import com.example.gateway.application.auth.JwtService;
 import com.example.gateway.application.plan.PlanService;
+import com.example.gateway.infra.fastapi.FastApiClient;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -13,19 +15,24 @@ import java.util.Map;
 public class PlanController {
 
     private final PlanService planService;
+    private final FastApiClient fastApiClient;
+    private final JwtService jwtService;
 
-    public PlanController(PlanService planService) {
+    public PlanController(PlanService planService, FastApiClient fastApiClient, JwtService jwtService) {
         this.planService = planService;
+        this.fastApiClient = fastApiClient;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/chat/createPlan")
-    public Mono<Object> createPlanFromChat(@Valid @RequestBody PlanDtos.CreatePlanFromChatRequest req) {
-        return planService.createPlanFromChat(req.chatId);
+    public Mono<Map> createPlanFromChat(@Valid @RequestBody PlanDtos.CreatePlanFromChatRequest req) {
+        return fastApiClient.createPlanFromChat(req.chatId);
     }
 
     @PostMapping("/plan/new")
-    public Mono<PlanDtos.NewPlanResponse> newPlan() {
-        return planService.newPlan();
+    public Mono<PlanDtos.NewPlanResponse> newPlan(@RequestParam String type, @RequestHeader("Authorization") String token) {
+        String company = jwtService.extractCompany(token.replace("Bearer ", ""));
+        return planService.newPlan(type, company);
     }
 
     @PostMapping("/design")
@@ -40,7 +47,7 @@ public class PlanController {
     }
 
     @GetMapping("/plan")
-    public Mono<PlanDtos.PlanResponse> getPlan(@Valid @RequestBody PlanDtos.PlanRequest req) {
-        return planService.getPlan(req.planId);
+    public Mono<PlanDtos.PlanResponse> getPlan(@RequestParam String planId) {
+        return planService.getPlan(planId);
     }
 }

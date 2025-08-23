@@ -9,60 +9,58 @@ import java.time.OffsetDateTime;
 @Document(collection = "plans")
 public class Plan {
     @Id
-    private String _id; // internal
+    private String _id; 
+    
     @Field("plan_id")
-        private String planId; // external key
-    private String userId;
-    private String targetType; // "brand" | "category"
-
-    // common
-    private String title;
-    private String mainBanner;
-
-    // brand
-    private String couponSection;
-    private String productSection;
-    private String eventNotes;
-
-    // category
-    private String section1;
-    private String section2;
-    private String section3;
-
-    // design
-    private String designUrl;
-
+    private String planId; 
+    
+    @Field("created_at")
     private OffsetDateTime createdAt;
+    
+    @Field("last_updated_at")
+    private OffsetDateTime lastUpdatedAt;
+    
+    @Field("target_type")
+    private String targetType;
+    
+    @Field("plan_content")
+    private String planContent; 
+    
+    @Field("url")
+    private String url;
+    
+    @Field("share")
+    private Boolean share;
+    
+    @Field("company")
+    private String company;
 
     public Plan() {}
 
-    // getters/setters
     public String get_id() { return _id; }
     public void set_id(String _id) { this._id = _id; }
+    
     public String getPlanId() { return planId; }
     public void setPlanId(String planId) { this.planId = planId; }
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
-    public String getTargetType() { return targetType; }
-    public void setTargetType(String targetType) { this.targetType = targetType; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getMainBanner() { return mainBanner; }
-    public void setMainBanner(String mainBanner) { this.mainBanner = mainBanner; }
-    public String getCouponSection() { return couponSection; }
-    public void setCouponSection(String couponSection) { this.couponSection = couponSection; }
-    public String getProductSection() { return productSection; }
-    public void setProductSection(String productSection) { this.productSection = productSection; }
-    public String getEventNotes() { return eventNotes; }
-    public void setEventNotes(String eventNotes) { this.eventNotes = eventNotes; }
-    public String getSection1() { return section1; }
-    public void setSection1(String section1) { this.section1 = section1; }
-    public String getSection2() { return section2; }
-    public void setSection2(String section2) { this.section2 = section2; }
-    public String getSection3() { return section3; }
-    public void setSection3(String section3) { this.section3 = section3; }
-    public String getDesignUrl() { return designUrl; }
-    public void setDesignUrl(String designUrl) { this.designUrl = designUrl; }
+    
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public OffsetDateTime getLastUpdatedAt() { return lastUpdatedAt; }
+    public void setLastUpdatedAt(OffsetDateTime lastUpdatedAt) { this.lastUpdatedAt = lastUpdatedAt; }
+    
+    public String getTargetType() { return targetType; }
+    public void setTargetType(String targetType) { this.targetType = targetType; }
+    
+    public String getPlanContent() { return planContent; }
+    public void setPlanContent(String planContent) { this.planContent = planContent; }
+    
+    public String getUrl() { return url; }
+    public void setUrl(String url) { this.url = url; }
+    
+    public Boolean getShare() { return share; }
+    public void setShare(Boolean share) { this.share = share; }
+    
+    public String getCompany() { return company; }
+    public void setCompany(String company) { this.company = company; }
 }

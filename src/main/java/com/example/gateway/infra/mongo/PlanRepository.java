@@ -9,4 +9,6 @@ public interface PlanRepository extends ReactiveMongoRepository<Plan, String> {
     Mono<Plan> findByPlanId(String planId);
     Flux<Plan> findByUserIdOrderByCreatedAtDesc(String userId);
     Flux<Plan> findByTargetTypeOrderByCreatedAtDesc(String targetType);
+    Flux<Plan> findByCompanyAndUrlIsNotNullAndShareTrueOrderByCreatedAtDesc(String company);
+    Flux<Plan> findByCompanyAndUrlIsNotNullAndShareTrueAndTargetTypeOrderByCreatedAtDesc(String company, String targetType);
 }
