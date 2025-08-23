@@ -234,4 +234,54 @@ public class AuthServiceAzure {
         public AuthDtos.AuthResponse body;
         public String jwt;
     }
+
+    public Mono<AuthDtos.AuthResponse> getUser(String authorization) {
+        if (StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")) {
+            return Mono.error(new IllegalArgumentException("Invalid authorization header"));
+        }
+        
+        String token = authorization.substring(7);
+        
+        return Mono.fromCallable(() -> jwtService.parse(token))
+        .flatMap(claims -> {
+            String userId = claims.get("sub", String.class);
+            if (StringUtils.isBlank(userId)) {
+                return Mono.error(new IllegalArgumentException("Invalid token: missing sub"));
+            }
+            
+            String email = claims.get("email", String.class);
+            String company = claims.get("company", String.class);
+            String oid = claims.get("oid", String.class);
+            
+            String userName = StringUtils.isNotBlank(email) ? email : oid;
+            
+            var chatsMono = chatRepository.findByUserIdOrderByUpdatedAtDesc(userId).collectList()
+                .map(list -> list.stream().map(c -> {
+                    var s = new AuthDtos.ChatSummary();
+                    s.chatId = c.getChatId();
+                    s.title = c.getTitle();
+                    return s;
+                }).collect(Collectors.toList()));
+            
+            var plansMono = planRepository.findByUserIdOrderByCreatedAtDesc(userId).collectList()
+                .map(list -> list.stream().map(p -> {
+                    var s = new AuthDtos.PlanSummary();
+                    s.planId = p.getPlanId();
+                    s.title = p.getTitle();
+                    return s;
+                }).collect(Collectors.toList()));
+            
+            return Mono.zip(chatsMono, plansMono).map(t -> {
+                var response = new AuthDtos.AuthResponse();
+                response.userId = userId;
+                response.token = token;
+                response.userName = userName;
+                response.company = company;
+                response.email = email;
+                response.chatList = t.getT1();
+                response.planList = t.getT2();
+                return response;
+            });
+        });
+    }
 }

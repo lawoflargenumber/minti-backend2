@@ -1,5 +1,6 @@
 package com.example.gateway.api.auth;
 
+import com.azure.core.annotation.Get;
 import com.example.gateway.api.dto.AuthDtos;
 import com.example.gateway.application.auth.AuthServiceAzure;
 import com.example.gateway.application.auth.AuthServiceAzure.AuthResult;
@@ -44,5 +45,10 @@ public class AuthController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + result.jwt)
                 .header("Access-Control-Expose-Headers", HttpHeaders.AUTHORIZATION)
                 .body(result.body);
+    }
+
+    @GetMapping("/user")
+    public Mono<AuthDtos.AuthResponse> getUser(@RequestHeader("Authorization") String authorization) {
+        return authService.getUser(authorization);
     }
 }

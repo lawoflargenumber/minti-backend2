@@ -83,4 +83,16 @@ public class PlanService {
                             }));
                 });
     }
+
+    public Mono<PlanDtos.PlanResponse> getPlan(String planId) {
+        return planRepository.findByPlanId(planId)
+                .map(p -> {
+                    var resp = new PlanDtos.PlanResponse();
+                    resp.title = p.getTitle();
+                    resp.targetType = p.getTargetType();
+                    resp.createdAt = p.getCreatedAt();
+                    resp.url = p.getDesignUrl();
+                    return resp;
+                });
+    }
 }

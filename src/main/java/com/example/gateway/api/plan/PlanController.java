@@ -38,4 +38,9 @@ public class PlanController {
         // No-op for now
         return Mono.empty();
     }
+
+    @GetMapping("/plan")
+    public Mono<PlanDtos.PlanResponse> getPlan(@Valid @RequestBody PlanDtos.PlanRequest req) {
+        return planService.getPlan(req.planId);
+    }
 }

@@ -30,4 +30,6 @@ public class AuthDtos {
         public List<ChatSummary> chatList;
         public List<PlanSummary> planList;
     }
+
+    
 }

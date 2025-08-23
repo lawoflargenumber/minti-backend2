@@ -2,6 +2,7 @@ package com.example.gateway.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
+import java.time.OffsetDateTime;
 
 public class PlanDtos {
 
@@ -68,5 +69,16 @@ public class PlanDtos {
 
     public static class ShareDesignRequest {
         @NotBlank public String planId;
+    }
+
+    public static class PlanRequest {
+        public String planId;
+    }
+
+    public static class PlanResponse {
+        public String title;
+        public String targetType; 
+        public OffsetDateTime createdAt; 
+        public String url;
     }
 }
