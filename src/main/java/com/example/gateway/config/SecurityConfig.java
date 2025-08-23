@@ -19,11 +19,11 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .pathMatchers("/auth/**").permitAll()
                 .pathMatchers(
-                    "/v3/api-docs/**",
-                    "/swagger-ui.html",
-                    "/swagger-ui/**",
+                    "**/v3/api-docs/**",
+                    "**/swagger-ui.html",
+                    "**/swagger-ui/**",
                     "/actuator/**"
-                ).permitAll()
+                ).permitAll()   
                 .anyExchange().authenticated()
             )
             .build();
