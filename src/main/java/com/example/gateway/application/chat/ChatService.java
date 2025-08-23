@@ -77,16 +77,7 @@ public class ChatService {
         return chatRepository.findByChatId(chatId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("chatId not found")))
                 .flatMap(chat -> {
-                    if (chat.getMessageIds() == null || chat.getMessageIds().isEmpty()) {
-                        // 메시지가 없는 경우 빈 리스트 반환
-                        var resp = new ChatDtos.ChatHistoryResponse();
-                        resp.chatId = chat.getChatId();
-                        resp.messages = new ArrayList<>();
-                        return Mono.just(resp);
-                    }
-                    
-                    // messageIds로 실제 메시지들을 조회하고 timestamp로 정렬
-                    return messageRepository.findByMessageIdInOrderByTimestampAsc(chat.getMessageIds())
+                    return messageRepository.findByChatIdOrderByTimestampAsc(chatId)
                         .collectList()
                         .map(messages -> {
                             var resp = new ChatDtos.ChatHistoryResponse();
