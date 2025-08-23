@@ -183,6 +183,7 @@ public class AuthServiceAzure {
                 logger.info("📦 인증 응답 데이터 구성");
                 var body = new AuthDtos.AuthResponse();
                 body.userId = internalUserId;
+                body.token = issuedJwt;
                 body.userName = userName;
                 body.company = company;
                 body.email = email;

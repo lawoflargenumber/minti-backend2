@@ -22,6 +22,7 @@ public class AuthDtos {
 
     public static class AuthResponse {
         public String userId;
+        public String token;
         public String userName;
         public String company;
         public String email;
