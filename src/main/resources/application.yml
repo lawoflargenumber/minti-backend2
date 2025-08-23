@@ -10,6 +10,16 @@ spring:
 
   application:
     name: webflux-gateway
+  
+  cloud:
+    gateway:
+      routes:
+        - id: swagger-route 
+          uri: lb://MY-SERVICE 
+          predicates:
+            - Path=/gateway-prefix/v3/api-docs/**, /gateway-prefix/swagger-ui.html, /gateway-prefix/swagger-ui/**, /gateway-prefix/webjars/**
+          filters:
+            - RewritePath=/gateway-prefix(?<segment>/?.*), $\{segment}
 
 app:
   security:

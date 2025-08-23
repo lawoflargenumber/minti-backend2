@@ -16,14 +16,15 @@ public class SecurityConfig {
         return http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(ex -> ex
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .pathMatchers("/auth/**").permitAll()
-                .pathMatchers(
-                    "**/v3/api-docs/**",
-                    "**/swagger-ui.html",
-                    "**/swagger-ui/**",
-                    "/actuator/**"
-                ).permitAll()   
+            .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .pathMatchers("/auth/**").permitAll()
+            .pathMatchers(
+                "/v3/api-docs/**",
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/webjars/**", 
+                "/actuator/**"
+            ).permitAll()
                 .anyExchange().authenticated()
             )
             .build();
