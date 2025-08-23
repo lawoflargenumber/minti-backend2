@@ -7,7 +7,7 @@ data:
   SPRING_R2DBC_USERNAME: "minti"                                                               
   APP_UPLOADS_DIR: "/tmp/uploads"
 
-  APP_FASTAPI_BASE-URL: "http://localhost:8000" 
+  APP_FASTAPI_BASE-URL: "http://fastapi-app-service:8000" 
   
   APP_CORS_ALLOWED-ORIGINS: "http://localhost:3000/"  
 

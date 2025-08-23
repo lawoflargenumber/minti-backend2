@@ -36,7 +36,7 @@ public class ChatController {
 
     @PostMapping(path="/new", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> newChat(@Valid @RequestBody ChatDtos.NewChatRequest req) {
-        return chatService.newChat(req.meesage);
+        return chatService.newChat(req.message);
     }
 
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)

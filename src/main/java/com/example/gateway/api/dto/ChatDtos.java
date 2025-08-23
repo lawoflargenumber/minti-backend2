@@ -31,7 +31,7 @@ public class ChatDtos {
 
     public static class NewChatRequest {
         @NotBlank
-        public String meesage; // note: spec typo preserved
+        public String message; // note: spec typo preserved
     }
 
     public static class ContinueChatRequest {
