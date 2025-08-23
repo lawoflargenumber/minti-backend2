@@ -11,5 +11,5 @@ public interface MessageRepository extends ReactiveMongoRepository<ChatMessage, 
     Flux<ChatMessage> findByChatIdOrderByTimestampAsc(String chatId);
     
     // messageIds로 조회하고 timestamp로 정렬
-    Flux<ChatMessage> findBy_idInOrderByTimestampAsc(List<String> messageIds);
+    Flux<ChatMessage> findByMessageIdInOrderByTimestampAsc(List<String> messageIds);
 }

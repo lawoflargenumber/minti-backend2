@@ -12,8 +12,11 @@ public class ChatMessage {
     
     @Field("chat_id")
     private String chatId;
+
+    @Field("message_id")
+    private String messageId;
     
-    private String speaker; // "user" | "ai"
+    private String speaker;
     private String content;
     
     @Field("timestamp")
@@ -41,4 +44,6 @@ public class ChatMessage {
     public void setTimestamp(OffsetDateTime timestamp) { this.timestamp = timestamp; }
     public OffsetDateTime getTs() { return ts; }
     public void setTs(OffsetDateTime ts) { this.ts = ts; }
+    public String getMessageId() { return messageId; }
+    public void setMessageId(String messageId) { this.messageId = messageId; }
 }

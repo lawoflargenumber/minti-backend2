@@ -86,7 +86,7 @@ public class ChatService {
                     }
                     
                     // messageIds로 실제 메시지들을 조회하고 timestamp로 정렬
-                    return messageRepository.findBy_idInOrderByTimestampAsc(chat.getMessageIds())
+                    return messageRepository.findByMessageIdInOrderByTimestampAsc(chat.getMessageIds())
                         .collectList()
                         .map(messages -> {
                             var resp = new ChatDtos.ChatHistoryResponse();
