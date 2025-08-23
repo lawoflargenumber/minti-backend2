@@ -32,6 +32,7 @@ public class SidebarService {
                     var s = new SidebarDtos.PlanSummary();
                     s.planId = p.getPlanId();
                     s.title = p.getTitle();
+                    s.targetType = p.getTargetType();
                     return s;
                 }).collect(Collectors.toList()));
 

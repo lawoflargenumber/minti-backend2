@@ -10,6 +10,7 @@ public class SidebarDtos {
     public static class PlanSummary {
         public String planId;
         public String title;
+        public String targetType;
     }
     public static class SidebarResponse {
         public List<ChatSummary> chatList;
