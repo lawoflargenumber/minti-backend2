@@ -82,8 +82,12 @@ public class FastApiClient {
                         System.out.println("[FA->GW] /chat/stream FINALLY: " + sig));
     }
 
-    public Mono<Map> createPlanFromChat(String chatId) {
-        Map<String, Object> payload = Map.of("chatId", chatId);
+    public Mono<Map> createPlanFromChat(String chatId, String userId, String company) {
+        Map<String, Object> payload = Map.of(
+            "chatId", chatId,
+            "userId", userId,
+            "company", company
+        );
         return webClient.post()
                 .uri("/chat/createPlan")
                 .contentType(MediaType.APPLICATION_JSON)

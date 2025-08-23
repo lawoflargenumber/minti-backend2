@@ -34,6 +34,12 @@ public class Plan {
     
     @Field("company")
     private String company;
+    
+    @Field("title")
+    private String title;
+    
+    @Field("user_id")
+    private String userId;
 
     public Plan() {}
 
@@ -63,4 +69,10 @@ public class Plan {
     
     public String getCompany() { return company; }
     public void setCompany(String company) { this.company = company; }
+    
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 }

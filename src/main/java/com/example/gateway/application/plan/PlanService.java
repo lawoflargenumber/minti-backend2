@@ -24,15 +24,17 @@ public class PlanService {
         this.fastApiClient = fastApiClient;
     }
 
-    public Mono<PlanDtos.NewPlanResponse> newPlan(String type, String company) {
+    public Mono<PlanDtos.NewPlanResponse> newPlan(String type, String company, String userId) {
         Plan plan = new Plan();
         plan.setPlanId(UUID.randomUUID().toString().replace("-", "")); // UUID4 without hyphens
         plan.setTargetType(type);
         plan.setCompany(company);
+        plan.setUserId(userId);
         plan.setCreatedAt(OffsetDateTime.now());
         plan.setLastUpdatedAt(OffsetDateTime.now());
         plan.setPlanContent("{}"); // 빈 JSON
         plan.setShare(false); // 기본값 false
+        plan.setTitle("Untitled"); // 기본 title
         
         return planRepository.save(plan)
                 .map(p -> {

@@ -159,6 +159,7 @@ public class AuthServiceAzure {
             String issuedJwt = jwtService.issueToken(internalUserId, extra);
             logger.info("🔑 JWT 토큰 발급 완료");
 
+            // 채팅 및 계획 목록 조회
             logger.info("💬 사용자 채팅 목록 조회");
             var chatsMono = chatRepository.findByUserIdOrderByUpdatedAtDesc(internalUserId).collectList()
                     .doOnSuccess(chats -> logger.info("💬 채팅 목록 조회 완료 - 개수: {}", chats.size()))
