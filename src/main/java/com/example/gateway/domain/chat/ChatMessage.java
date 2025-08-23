@@ -17,19 +17,19 @@ public class ChatMessage {
     private String messageId;
     
     private String speaker;
+
     private String content;
     
     @Field("timestamp")
     private OffsetDateTime timestamp;
     
-    private OffsetDateTime ts;
 
     public ChatMessage() {}
 
-    public ChatMessage(String speaker, String content, OffsetDateTime ts) {
+    public ChatMessage(String speaker, String content, OffsetDateTime timestamp) {
         this.speaker = speaker;
         this.content = content;
-        this.ts = ts;
+        this.timestamp = timestamp;
     }
     
     public String get_id() { return _id; }
@@ -42,8 +42,6 @@ public class ChatMessage {
     public void setContent(String content) { this.content = content; }
     public OffsetDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(OffsetDateTime timestamp) { this.timestamp = timestamp; }
-    public OffsetDateTime getTs() { return ts; }
-    public void setTs(OffsetDateTime ts) { this.ts = ts; }
     public String getMessageId() { return messageId; }
     public void setMessageId(String messageId) { this.messageId = messageId; }
 }

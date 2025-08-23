@@ -21,7 +21,7 @@ public class Chat {
 
     private String title;
 
-    private List<String> messageIds = new ArrayList<>();
+    private List<String> messageIds;
 
     @Field("created_at")
     private OffsetDateTime createdAt;
