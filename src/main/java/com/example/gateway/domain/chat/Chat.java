@@ -21,7 +21,7 @@ public class Chat {
 
     private String title;
 
-    private List<ChatMessage> messages = new ArrayList<>();
+    private List<String> messageIds = new ArrayList<>();
 
     @Field("created_at")
     private OffsetDateTime createdAt;
@@ -39,8 +39,8 @@ public class Chat {
     public void setUserId(String userId) { this.userId = userId; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-    public List<ChatMessage> getMessages() { return messages; }
-    public void setMessages(List<ChatMessage> messages) { this.messages = messages; }
+    public List<String> getMessageIds() { return messageIds; }
+    public void setMessageIds(List<String> messageIds) { this.messageIds = messageIds; }
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }

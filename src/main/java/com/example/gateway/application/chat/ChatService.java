@@ -6,6 +6,7 @@ import com.example.gateway.domain.chat.ChatMessage;
 import com.example.gateway.application.auth.JwtService;
 import com.example.gateway.infra.fastapi.FastApiClient;
 import com.example.gateway.infra.mongo.ChatRepository;
+import com.example.gateway.infra.mongo.MessageRepository;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -22,10 +24,12 @@ public class ChatService {
     private final JwtService jwtService;
 
     private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
     private final FastApiClient fastApiClient;
 
-    public ChatService(ChatRepository chatRepository, FastApiClient fastApiClient, JwtService jwtService) {
+    public ChatService(ChatRepository chatRepository, MessageRepository messageRepository, FastApiClient fastApiClient, JwtService jwtService) {
         this.chatRepository = chatRepository;
+        this.messageRepository = messageRepository;
         this.fastApiClient = fastApiClient;
         this.jwtService = jwtService;
     }
@@ -72,16 +76,31 @@ public class ChatService {
     public Mono<ChatDtos.ChatHistoryResponse> getHistory(String chatId) {
         return chatRepository.findByChatId(chatId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("chatId not found")))
-                .map(c -> {
-                    var resp = new ChatDtos.ChatHistoryResponse();
-                    resp.chatId = c.getChatId();
-                    resp.messages = c.getMessages().stream().map(m -> {
-                        var dto = new ChatDtos.Message();
-                        dto.speaker = m.getSpeaker();
-                        dto.content = m.getContent();
-                        return dto;
-                    }).toList();
-                    return resp;
+                .flatMap(chat -> {
+                    if (chat.getMessageIds() == null || chat.getMessageIds().isEmpty()) {
+                        // 메시지가 없는 경우 빈 리스트 반환
+                        var resp = new ChatDtos.ChatHistoryResponse();
+                        resp.chatId = chat.getChatId();
+                        resp.messages = new ArrayList<>();
+                        return Mono.just(resp);
+                    }
+                    
+                    // messageIds로 실제 메시지들을 조회하고 timestamp로 정렬
+                    return messageRepository.findBy_idInOrderByTimestampAsc(chat.getMessageIds())
+                        .collectList()
+                        .map(messages -> {
+                            var resp = new ChatDtos.ChatHistoryResponse();
+                            resp.chatId = chat.getChatId();
+                            resp.messages = messages.stream()
+                                .map(m -> {
+                                    var dto = new ChatDtos.Message();
+                                    dto.speaker = m.getSpeaker();
+                                    dto.content = m.getContent();
+                                    return dto;
+                                })
+                                .toList();
+                            return resp;
+                        });
                 });
     }
 
