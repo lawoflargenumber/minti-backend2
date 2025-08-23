@@ -21,7 +21,7 @@ public class Plan {
     private OffsetDateTime lastUpdatedAt;
     
     @Field("target_type")
-    private String targetType;
+    private TargetType targetType;
     
     @Field("plan_content")
     private String planContent; 
@@ -55,8 +55,8 @@ public class Plan {
     public OffsetDateTime getLastUpdatedAt() { return lastUpdatedAt; }
     public void setLastUpdatedAt(OffsetDateTime lastUpdatedAt) { this.lastUpdatedAt = lastUpdatedAt; }
     
-    public String getTargetType() { return targetType; }
-    public void setTargetType(String targetType) { this.targetType = targetType; }
+    public TargetType getTargetType() { return targetType; }
+    public void setTargetType(TargetType targetType) { this.targetType = targetType; }
     
     public String getPlanContent() { return planContent; }
     public void setPlanContent(String planContent) { this.planContent = planContent; }
