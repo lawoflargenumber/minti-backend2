@@ -30,9 +30,8 @@ public class ChatDtos {
         public List<Message> messages;
     }
 
-    public static class NewChatRequest {
-        @NotBlank
-        public String message; 
+    public static class NewChatResponse {
+        public String chatId;
     }
 
     public static class ContinueChatRequest {

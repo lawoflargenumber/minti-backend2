@@ -20,6 +20,19 @@ public class FastApiClient {
         this.webClient = fastApiWebClient;
     }
 
+    public Mono<Map> newChat(String userId, String company) {
+        Map<String, Object> payload = Map.of(
+            "userId", userId,
+            "company", company
+        );
+        return webClient.post()
+                .uri("/chat/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(payload))
+                .retrieve()
+                .bodyToMono(Map.class);
+    }
+
     public Flux<ServerSentEvent<String>> streamNewChat(String userMessage, String userId, String company) {
         Map<String, Object> payload = Map.of(
             "userMessage", userMessage,

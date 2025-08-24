@@ -101,23 +101,32 @@ public class ChatService {
         return chatRepository.deleteByChatId(chatId);
     }
 
-    public Flux<ServerSentEvent<String>> newChat(String userMessage) {
-        return currentUser().flatMapMany(uc ->
-        fastApiClient.streamNewChat(userMessage, uc.userId(), uc.company()))
-        .doOnNext(sse -> {
-                     String ev = sse.event();
-                    String data = sse.data();
-                    if ("chunk".equals(ev)) {
-                        System.out.println("[GW->FE] OUT event=chunk dataPreview=" + clip(data, 200));
-                    } else {
-                        System.out.println("[GW->FE] OUT event=" + ev + " len=" + (data != null ? data.length() : 0));
-                    }
-                })
-                .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder()
-                        .event("error")
-                        .data(json(Map.of("type","error","content", Map.of("message", ex.getMessage()))))
-                        .build()));
-     }
+    public Mono<ChatDtos.NewChatResponse> newChat() {
+        return currentUser().flatMap(uc -> fastApiClient.newChat(uc.userId(), uc.company()))
+                .map(resp -> {
+                    var dto = new ChatDtos.NewChatResponse();
+                    dto.chatId = (String) resp.get("chatId");
+                    return dto;
+                });
+    }
+
+    // public Flux<ServerSentEvent<String>> newChat(String userMessage) {
+    //     return currentUser().flatMapMany(uc ->
+    //     fastApiClient.streamNewChat(userMessage, uc.userId(), uc.company()))
+    //     .doOnNext(sse -> {
+    //                  String ev = sse.event();
+    //                 String data = sse.data();
+    //                 if ("chunk".equals(ev)) {
+    //                     System.out.println("[GW->FE] OUT event=chunk dataPreview=" + clip(data, 200));
+    //                 } else {
+    //                     System.out.println("[GW->FE] OUT event=" + ev + " len=" + (data != null ? data.length() : 0));
+    //                 }
+    //             })
+    //             .onErrorResume(ex -> Flux.just(ServerSentEvent.<String>builder()
+    //                     .event("error")
+    //                     .data(json(Map.of("type","error","content", Map.of("message", ex.getMessage()))))
+    //                     .build()));
+    //  }
 
     public Flux<ServerSentEvent<String>> continueChat(String chatId, String message) {
         return currentUser().flatMapMany(uc ->fastApiClient.streamChat(chatId, message, uc.userId(), uc.company()))
