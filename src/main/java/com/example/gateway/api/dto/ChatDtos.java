@@ -2,8 +2,7 @@ package com.example.gateway.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Map;
-
+    
 public class ChatDtos {
 
     public static class ChatIdRequest {
@@ -22,7 +21,7 @@ public class ChatDtos {
     public static class Message {
         public String speaker;
         public String content;
-        public Map<String, Object> graph;
+        public String graph;
         public String plan;
     }
 
