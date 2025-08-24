@@ -44,10 +44,10 @@ jobs:
             --from-literal=SPRING_R2DBC_PASSWORD='${{ secrets.SPRING_R2DBC_PASSWORD }}' \
             --from-literal=APP_AUTH_AZURE_CLIENT_SECRET='${{ secrets.APP_AUTH_AZURE_CLIENT_SECRET }}' \
             --from-literal=APP_SECURITY_JWT_SECRET='${{ secrets.APP_SECURITY_JWT_SECRET }}' \
-            --from-literal=AZURE_STORAGE_ACCOUNT_NAME='${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}' \
-            --from-literal=AZURE_STORAGE_CONTAINER_NAME='${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}' \
-            --from-literal=AZURE_STORAGE_ACCOUNT_KEY='${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}' \
-            --from-literal=AZURE_STORAGE_CONNECTION_STRING='${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}' \
+            --from-literal=APP_AZURE_STORAGE_ACCOUNT_NAME='${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}' \
+            --from-literal=APP_AZURE_STORAGE_CONTAINER_NAME='${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}' \
+            --from-literal=APP_AZURE_STORAGE_ACCOUNT_KEY='${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}' \
+            --from-literal=APP_AZURE_STORAGE_CONNECTION_STRING='${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to AKS
