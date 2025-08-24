@@ -35,8 +35,8 @@ public class ChatController {
     }
 
     @PostMapping(path="/new")
-    public Mono<ChatDtos.NewChatResponse> newChat(@RequestBody String message) {
-        return chatService.newChat(message);
+    public Mono<ChatDtos.NewChatResponse> newChat(@RequestBody ChatDtos.NewChatRequest req) {
+        return chatService.newChat(req.message);
     }
 
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
