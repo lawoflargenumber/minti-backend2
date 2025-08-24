@@ -31,7 +31,13 @@ public class FastApiClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(payload))
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(String.class)
+                .map(response -> {
+                    // FastAPI에서 String으로 응답이 오는 경우를 처리
+                    Map<String, Object> result = new java.util.HashMap<>();
+                    result.put("chatId", response);
+                    return result;
+                });
     }
 
     public Flux<ServerSentEvent<String>> streamNewChat(String userMessage, String userId, String company) {
