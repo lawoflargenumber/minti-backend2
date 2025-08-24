@@ -87,6 +87,8 @@ public class ChatService {
                                     var dto = new ChatDtos.Message();
                                     dto.speaker = m.getSpeaker();
                                     dto.content = m.getContent();
+                                    dto.graph = m.getGraph();
+                                    dto.plan = m.getPlan();
                                     return dto;
                                 })
                                 .toList();

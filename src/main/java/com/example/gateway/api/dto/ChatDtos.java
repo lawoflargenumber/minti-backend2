@@ -2,6 +2,7 @@ package com.example.gateway.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ChatDtos {
 
@@ -21,6 +22,8 @@ public class ChatDtos {
     public static class Message {
         public String speaker;
         public String content;
+        public JsonNode graph;
+        public String plan;
     }
 
     public static class ChatHistoryResponse {
