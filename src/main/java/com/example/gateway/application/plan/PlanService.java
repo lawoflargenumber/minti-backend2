@@ -45,26 +45,6 @@ public class PlanService {
                 });
     }
 
-    public Mono<PlanDtos.DesignResponse> createDesign(Map<String, Object> designPayload) {
-        return fastApiClient.createDesign(designPayload)
-                .flatMap(map -> {
-                    String planId = (String) map.get("planId");
-                    String designUrl = (String) map.get("designUrl");
-                    return planRepository.findByPlanId(planId)
-                            .flatMap(p -> {
-                                // plan_content에 designUrl 정보를 추가하거나 별도 필드로 저장
-                                // 현재는 단순히 응답만 반환
-                                return Mono.empty();
-                            })
-                            .then(Mono.fromSupplier(() -> {
-                                var resp = new PlanDtos.DesignResponse();
-                                resp.planId = planId;
-                                resp.designUrl = designUrl;
-                                return resp;
-                            }));
-                });
-    }
-
     public Mono<PlanDtos.PlanResponse> getPlan(String planId) {
         return planRepository.findByPlanId(planId)
                 .map(p -> {

@@ -38,11 +38,6 @@ public class PlanController {
         return planService.newPlan(type, company, userId);
     }
 
-    @PostMapping("/design")
-    public Mono<PlanDtos.DesignResponse> createDesign(@RequestBody Map<String, Object> payload) {
-        return planService.createDesign(payload);
-    }
-
     @PostMapping("/design/share")
     public Mono<Void> share(@Valid @RequestBody PlanDtos.ShareDesignRequest req) {
         // No-op for now

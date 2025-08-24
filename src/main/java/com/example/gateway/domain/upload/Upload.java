@@ -8,13 +8,22 @@ import java.time.OffsetDateTime;
 
 @Document(collection = "uploads")
 public class Upload {
+
     @Id
     private String _id;
+
     private String imageId;
+
+    private String url;
+    
     @Field("plan_id")
-        private String planId; // link by plan_id
+    private String planId; 
+
     private String filename;
+
     private String path;
+
+    @Field("created_at")
     private OffsetDateTime createdAt;
 
     public Upload() {}
