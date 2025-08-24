@@ -6,7 +6,7 @@ import com.example.gateway.infra.fastapi.FastApiClient;
 import com.example.gateway.infra.mongo.PlanRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -45,14 +45,30 @@ public class PlanService {
                 });
     }
 
-    public Mono<PlanDtos.PlanResponse> getPlan(String planId) {
+    public Mono<PlanDtos.GetDesignResponse> getDesign(String planId) {
         return planRepository.findByPlanId(planId)
                 .map(p -> {
-                    var resp = new PlanDtos.PlanResponse();
+                    var resp = new PlanDtos.GetDesignResponse();
                     resp.targetType = p.getTargetType();
                     resp.createdAt = p.getCreatedAt();
                     resp.url = p.getUrl();
                     return resp;
                 });
+    }
+
+    public Mono<?> getPlan(String planId) {
+        Plan plan = planRepository.findByPlanId(planId).block();
+        if (plan == null) {
+            return Mono.error(new RuntimeException("Plan not found"));
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
+            return Mono.just(parsed);
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException("Failed to parse plan content", e));
+        }
     }
 }

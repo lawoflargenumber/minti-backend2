@@ -71,11 +71,11 @@ public class PlanDtos {
         @NotBlank public String planId;
     }
 
-    public static class PlanRequest {
+    public static class GetDesignRequest {
         public String planId;
     }
 
-    public static class PlanResponse {
+    public static class GetDesignResponse {
         public String title;
         public String targetType; 
         public OffsetDateTime createdAt; 

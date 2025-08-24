@@ -44,8 +44,13 @@ public class PlanController {
         return Mono.empty();
     }
 
+    @GetMapping("/design")
+    public Mono<PlanDtos.GetDesignResponse> getDesign(@RequestParam String planId) {
+        return planService.getDesign(planId);
+    }
+
     @GetMapping("/plan")
-    public Mono<PlanDtos.PlanResponse> getPlan(@RequestParam String planId) {
+    public Mono<?> getPlan(@RequestParam String planId) {
         return planService.getPlan(planId);
     }
 }
