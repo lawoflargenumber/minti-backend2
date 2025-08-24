@@ -34,9 +34,9 @@ public class ChatController {
         return chatService.deleteChat(chatId);
     }
 
-    @PostMapping(path="/new", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Mono<ChatDtos.NewChatResponse> newChat() {
-        return chatService.newChat();
+    @PostMapping(path="/new")
+    public Mono<ChatDtos.NewChatResponse> newChat(@RequestBody String message) {
+        return chatService.newChat(message);
     }
 
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)

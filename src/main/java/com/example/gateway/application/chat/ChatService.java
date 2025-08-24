@@ -101,8 +101,8 @@ public class ChatService {
         return chatRepository.deleteByChatId(chatId);
     }
 
-    public Mono<ChatDtos.NewChatResponse> newChat() {
-        return currentUser().flatMap(uc -> fastApiClient.newChat(uc.userId(), uc.company()))
+    public Mono<ChatDtos.NewChatResponse> newChat(String message) {
+        return currentUser().flatMap(uc -> fastApiClient.newChat(uc.userId(), uc.company(), message))
                 .map(resp -> {
                     var dto = new ChatDtos.NewChatResponse();
                     dto.chatId = (String) resp.get("chatId");

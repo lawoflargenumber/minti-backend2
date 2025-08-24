@@ -20,10 +20,11 @@ public class FastApiClient {
         this.webClient = fastApiWebClient;
     }
 
-    public Mono<Map> newChat(String userId, String company) {
+    public Mono<Map> newChat(String userId, String company, String message) {
         Map<String, Object> payload = Map.of(
             "userId", userId,
-            "company", company
+            "company", company,
+            "message", message
         );
         return webClient.post()
                 .uri("/chat/new")
