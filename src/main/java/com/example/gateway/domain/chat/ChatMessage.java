@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.OffsetDateTime;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
 
 @Document(collection = "messages")
 public class ChatMessage {
@@ -12,7 +12,7 @@ public class ChatMessage {
     private String _id;
     
     @Field("chat_id")
-    private String chatId;
+    private String chatId;  
 
     @Field("message_id")
     private String messageId;
@@ -24,7 +24,7 @@ public class ChatMessage {
     @Field("timestamp")
     private OffsetDateTime timestamp;
     
-    private JsonNode graph;
+    private Map<String, Object> graph;
 
     private String plan;
 
@@ -48,8 +48,8 @@ public class ChatMessage {
     public void setTimestamp(OffsetDateTime timestamp) { this.timestamp = timestamp; }
     public String getMessageId() { return messageId; }
     public void setMessageId(String messageId) { this.messageId = messageId; }
-    public JsonNode getGraph() { return graph; }
-    public void setGraph(JsonNode graph) { this.graph = graph; }
+    public Map<String, Object> getGraph() { return graph; }
+    public void setGraph(Map<String, Object> graph) { this.graph = graph; }
     public String getPlan() { return plan; }
     public void setPlan(String plan) { this.plan = plan; }
 }
