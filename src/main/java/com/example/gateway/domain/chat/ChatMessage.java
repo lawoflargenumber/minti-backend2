@@ -23,6 +23,7 @@ public class ChatMessage {
     @Field("timestamp")
     private OffsetDateTime timestamp;
     
+    @Field("graph_data")
     private String graph;
 
     private String plan;
