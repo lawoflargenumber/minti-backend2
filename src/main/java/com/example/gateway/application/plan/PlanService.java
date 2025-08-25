@@ -57,18 +57,33 @@ public class PlanService {
     }
 
     public Mono<?> getPlan(String planId) {
-        Plan plan = planRepository.findByPlanId(planId).block();
-        if (plan == null) {
-            return Mono.error(new RuntimeException("Plan not found"));
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
-            return Mono.just(parsed);
-        } catch (Exception e) {
-            return Mono.error(new RuntimeException("Failed to parse plan content", e));
-        }
+        return planRepository.findByPlanId(planId)
+            .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
+            .flatMap(plan -> {
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
+                    return Mono.just(parsed);
+                } catch (Exception e) {
+                    return Mono.error(new RuntimeException("Failed to parse plan content", e));
+                }
+            });
     }
+
+    // public Mono<?> getPlan(String planId) {
+    //     Plan plan = planRepository.findByPlanId(planId).block();
+    //     if (plan == null) {
+    //         return Mono.error(new RuntimeException("Plan not found"));
+    //     }
+
+    //     ObjectMapper objectMapper = new ObjectMapper();
+
+    //     try {
+    //         Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
+    //         return Mono.just(parsed);
+    //     } catch (Exception e) {
+    //         return Mono.error(new RuntimeException("Failed to parse plan content", e));
+    //     }
+    // }
 }
