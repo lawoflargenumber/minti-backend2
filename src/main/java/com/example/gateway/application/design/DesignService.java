@@ -3,7 +3,6 @@ package com.example.gateway.application.design;
 import com.example.gateway.api.dto.DesignDtos.DesignCreateResponse;
 import com.example.gateway.api.dto.DesignDtos.DesignCreateBrandRequest;
 import com.example.gateway.api.dto.DesignDtos.DesignCreateCategoryRequest;
-import com.example.gateway.domain.plan.Plan;
 import com.example.gateway.infra.mongo.PlanRepository;  
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;

@@ -29,6 +29,11 @@ public class PlanDtos {
         public String section3;
     }
 
+    public static class NewPlanRequest {
+        @NotBlank
+        public String type;
+    }
+
     public static class NewPlanResponse {
         public String planId;
         public String type;

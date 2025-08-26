@@ -32,10 +32,10 @@ public class PlanController {
     }
 
     @PostMapping("/plan/new")
-    public Mono<PlanDtos.NewPlanResponse> newPlan(@RequestBody String type, @RequestHeader("Authorization") String token) {
+    public Mono<PlanDtos.NewPlanResponse> newPlan(@Valid @RequestBody PlanDtos.NewPlanRequest req, @RequestHeader("Authorization") String token) {
         String company = jwtService.extractCompany(token.replace("Bearer ", ""));
         String userId = jwtService.parse(token.replace("Bearer ", "")).getSubject();
-        return planService.newPlan(type, company, userId);
+        return planService.newPlan(req.type, company, userId);
     }
 
     @PostMapping("/design/share")
