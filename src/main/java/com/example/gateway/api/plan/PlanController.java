@@ -25,10 +25,11 @@ public class PlanController {
     }
 
     @PostMapping("/chat/createPlan")
-    public Mono<Map> createPlanFromChat(@Valid @RequestBody PlanDtos.CreatePlanFromChatRequest req, @RequestHeader("Authorization") String token) {
+    public Mono<Map<String, Object>> createPlanFromChat(@Valid @RequestBody PlanDtos.CreatePlanFromChatRequest req, @RequestHeader("Authorization") String token) {
         String company = jwtService.extractCompany(token.replace("Bearer ", ""));
         String userId = jwtService.parse(token.replace("Bearer ", "")).get("oid", String.class);
-        return fastApiClient.createPlanFromChat(req.chatId, userId, company);
+        return fastApiClient.createPlanFromChat(req.chatId, userId, company)
+                .flatMap(planData -> planService.savePlanFromChat(planData, userId, company));
     }
 
     @PostMapping("/plan/new")

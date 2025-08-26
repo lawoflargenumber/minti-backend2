@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
 
 import static com.example.gateway.application.ids.Ids.newId;
 
@@ -71,19 +72,40 @@ public class PlanService {
             });
     }
 
-    // public Mono<?> getPlan(String planId) {
-    //     Plan plan = planRepository.findByPlanId(planId).block();
-    //     if (plan == null) {
-    //         return Mono.error(new RuntimeException("Plan not found"));
-    //     }
-
-    //     ObjectMapper objectMapper = new ObjectMapper();
-
-    //     try {
-    //         Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
-    //         return Mono.just(parsed);
-    //     } catch (Exception e) {
-    //         return Mono.error(new RuntimeException("Failed to parse plan content", e));
-    //     }
-    // }
+    public Mono<Map<String, Object>> savePlanFromChat(Map<String, Object> planData, String userId, String company) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        // FastAPI 응답에서 필요한 정보 추출
+        String planId = UUID.randomUUID().toString().replace("-", "");
+        String targetType = (String) planData.getOrDefault("type", "brand"); 
+        String title = (String) planData.getOrDefault("title", "Untitled");
+        
+        // PlanContent를 JSON 문자열로 변환
+        String planContent;
+        try {
+            planContent = objectMapper.writeValueAsString(planData);
+        } catch (Exception e) {
+            return Mono.error(new RuntimeException("Failed to serialize plan data", e));
+        }
+        
+        // Plan 객체 생성 및 저장
+        Plan plan = new Plan();
+        plan.setPlanId(planId);
+        plan.setTargetType(targetType);
+        plan.setCompany(company);
+        plan.setUserId(userId);
+        plan.setCreatedAt(OffsetDateTime.now());
+        plan.setLastUpdatedAt(OffsetDateTime.now());
+        plan.setPlanContent(planContent);
+        plan.setShare(false);
+        plan.setTitle(title);
+        
+        return planRepository.save(plan)
+                .map(p -> {
+                    // FastAPI 응답에 planId만 추가
+                    Map<String, Object> response = new HashMap<>(planData);
+                    response.put("planId", p.getPlanId());
+                    return response;
+                });
+    }
 }
