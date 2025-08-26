@@ -234,27 +234,49 @@ public class DesignService {
         return planRepository.findByPlanId(req.getPlanId())
             .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
             .flatMap(plan -> {
-                Map<String, Object> designData = new HashMap<>();
-                ObjectMapper objectMapper = new ObjectMapper();
-                
-                try {
-                    Map<String, Object> allFields = objectMapper.convertValue(req, Map.class);
-                    allFields.remove("planId");
-                    designData = allFields;
-                } catch (Exception e) {
-                    return Mono.error(new RuntimeException("Failed to convert request to map", e));
-                }
-
-                String jsonContent;
-                try {
-                    jsonContent = objectMapper.writeValueAsString(designData);
-                } catch (Exception e) {
-                    return Mono.error(new RuntimeException("Failed to serialize design data", e));
-                }
-
-                plan.setPlanContent(jsonContent);
-                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
-                return planRepository.save(plan);
+                // 모든 섹션을 병렬로 생성
+                return Mono.zip(
+                    createSection("title", req.getTitle(), req.getTitleImages()),
+                    createSection("main_banner", req.getMainBanner(), req.getMainBannerImages()),
+                    createSection("coupon_section", req.getCouponSection(), req.getCouponSectionImages()),
+                    createSection("product_section", req.getProductSection(), req.getProductSectionImages()),
+                    createSection("event_notes", req.getEventNotes(), req.getEventNotesImages())
+                )
+                .flatMap(tuple -> {
+                    // 새로운 API 형식으로 데이터 변환
+                    Map<String, Object> apiPayload = new HashMap<>();
+                    List<Map<String, Object>> sections = new ArrayList<>();
+                    sections.add(tuple.getT1());
+                    sections.add(tuple.getT2());
+                    sections.add(tuple.getT3());
+                    sections.add(tuple.getT4());
+                    sections.add(tuple.getT5());
+                    
+                    apiPayload.put("sections", sections);
+                    
+                    // 변환된 결과 로깅 (API 호출 직전)
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String requestJson = objectMapper.writeValueAsString(apiPayload);
+                        logger.info("=== Mock Creazy API Request (createMockType1) ===");
+                        logger.info("URL: https://creazy.app/api/external/generate-sections");
+                        logger.info("Request Body: {}", requestJson);
+                    } catch (Exception e) {
+                        logger.error("Failed to log request: {}", e.getMessage());
+                    }
+                    
+                    // Plan 업데이트 (Mock URL 사용)
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        String jsonContent = objectMapper.writeValueAsString(req);
+                        plan.setPlanContent(jsonContent);
+                        plan.setTitle(req.getTitle());
+                        plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
+                        return planRepository.save(plan);
+                    } catch (Exception e) {
+                        return Mono.error(new RuntimeException("Failed to serialize plan content", e));
+                    }
+                });
             })
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
     }
@@ -263,27 +285,49 @@ public class DesignService {
         return planRepository.findByPlanId(req.getPlanId())
             .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
             .flatMap(plan -> {
-                Map<String, Object> designData = new HashMap<>();
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                try {
-                    Map<String, Object> allFields = objectMapper.convertValue(req, Map.class);
-                    allFields.remove("planId");
-                    designData = allFields;
-                } catch (Exception e) {
-                    return Mono.error(new RuntimeException("Failed to convert request to map", e));
-                }
-
-                String jsonContent;
-                try {
-                    jsonContent = objectMapper.writeValueAsString(designData);
-                } catch (Exception e) {
-                    return Mono.error(new RuntimeException("Failed to serialize design data", e));
-                }
-
-                plan.setPlanContent(jsonContent);
-                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
-                return planRepository.save(plan);
+                // 모든 섹션을 병렬로 생성
+                return Mono.zip(
+                    createSection("title", req.getTitle(), req.getTitleImages()),
+                    createSection("main_banner", req.getMainBanner(), req.getMainBannerImages()),
+                    createSection("section1", req.getSection1(), req.getSection1Images()),
+                    createSection("section2", req.getSection2(), req.getSection2Images()),
+                    createSection("section3", req.getSection3(), req.getSection3Images())
+                )
+                .flatMap(tuple -> {
+                    // 새로운 API 형식으로 데이터 변환
+                    Map<String, Object> apiPayload = new HashMap<>();
+                    List<Map<String, Object>> sections = new ArrayList<>();
+                    sections.add(tuple.getT1());
+                    sections.add(tuple.getT2());
+                    sections.add(tuple.getT3());
+                    sections.add(tuple.getT4());
+                    sections.add(tuple.getT5());
+                    
+                    apiPayload.put("sections", sections);
+                    
+                    // 변환된 결과 로깅 (API 호출 직전)
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String requestJson = objectMapper.writeValueAsString(apiPayload);
+                        logger.info("=== Mock Creazy API Request (createMockType2) ===");
+                        logger.info("URL: https://creazy.app/api/external/generate-sections");
+                        logger.info("Request Body: {}", requestJson);
+                    } catch (Exception e) {
+                        logger.error("Failed to log request: {}", e.getMessage());
+                    }
+                    
+                    // Plan 업데이트 (Mock URL 사용)
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        String jsonContent = objectMapper.writeValueAsString(req);
+                        plan.setPlanContent(jsonContent);
+                        plan.setTitle(req.getTitle());
+                        plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
+                        return planRepository.save(plan);
+                    } catch (Exception e) {
+                        return Mono.error(new RuntimeException("Failed to serialize plan content", e));
+                    }
+                });
             })
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
     }
