@@ -4,7 +4,6 @@ import com.example.gateway.api.dto.DesignDtos.DesignCreateResponse;
 import com.example.gateway.api.dto.DesignDtos.DesignCreateBrandRequest;
 import com.example.gateway.api.dto.DesignDtos.DesignCreateCategoryRequest;
 import com.example.gateway.infra.mongo.PlanRepository;
-import com.example.gateway.infra.mongo.UploadRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -25,12 +24,10 @@ public class DesignService {
     private static final Logger logger = LoggerFactory.getLogger(DesignService.class);
     
     private final PlanRepository planRepository;
-    private final UploadRepository uploadRepository;
     private final WebClient webClient;
 
-    public DesignService(PlanRepository planRepository, UploadRepository uploadRepository, WebClient webClient) {
+    public DesignService(PlanRepository planRepository, WebClient webClient) {
         this.planRepository = planRepository;
-        this.uploadRepository = uploadRepository;
         this.webClient = webClient;
     }
 
@@ -117,35 +114,27 @@ public class DesignService {
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), savedPlan.getUrl()));
     }
     
-    private Mono<Map<String, Object>> createSection(String name, String plan, List<String> imageIds) {
+    private Mono<Map<String, Object>> createSection(String name, String plan, List<String> imageUrls) {
         Map<String, Object> section = new HashMap<>();
         section.put("name", name);
         section.put("plan", plan);
         
-        // 첫 번째 이미지 ID로 Upload에서 URL 조회
-        if (imageIds != null && !imageIds.isEmpty()) {
-            String firstImageId = imageIds.get(0);
-            return uploadRepository.findByImageId(firstImageId)
-                .map(upload -> {
-                    List<Map<String, String>> images = new ArrayList<>();
-                    Map<String, String> image = new HashMap<>();
-                    image.put("url", upload.getPath());
-                    images.add(image);
-                    section.put("images", images);
-                    return section;
-                })
-                .switchIfEmpty(Mono.defer(() -> {
-                    // Upload를 찾지 못한 경우 빈 이미지 리스트
-                    List<Map<String, String>> images = new ArrayList<>();
-                    section.put("images", images);
-                    return Mono.just(section);
-                }));
+        // URL들을 그대로 사용하여 이미지 리스트 생성
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            List<Map<String, String>> images = new ArrayList<>();
+            for (String url : imageUrls) {
+                Map<String, String> image = new HashMap<>();
+                image.put("url", url);
+                images.add(image);
+            }
+            section.put("images", images);
         } else {
             // 이미지가 없는 경우 빈 이미지 리스트
             List<Map<String, String>> images = new ArrayList<>();
             section.put("images", images);
-            return Mono.just(section);
         }
+        
+        return Mono.just(section);
     }
 
     public Mono<DesignCreateResponse> createType2(DesignCreateCategoryRequest req) {
