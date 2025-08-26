@@ -229,4 +229,63 @@ public class DesignService {
             })
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), savedPlan.getUrl()));
     }
+
+    public Mono<DesignCreateResponse> createMockType1(DesignCreateBrandRequest req) {
+        return planRepository.findByPlanId(req.getPlanId())
+            .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
+            .flatMap(plan -> {
+                Map<String, Object> designData = new HashMap<>();
+                ObjectMapper objectMapper = new ObjectMapper();
+                
+                try {
+                    Map<String, Object> allFields = objectMapper.convertValue(req, Map.class);
+                    allFields.remove("planId");
+                    designData = allFields;
+                } catch (Exception e) {
+                    return Mono.error(new RuntimeException("Failed to convert request to map", e));
+                }
+
+                String jsonContent;
+                try {
+                    jsonContent = objectMapper.writeValueAsString(designData);
+                } catch (Exception e) {
+                    return Mono.error(new RuntimeException("Failed to serialize design data", e));
+                }
+
+                plan.setPlanContent(jsonContent);
+                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
+                return planRepository.save(plan);
+            })
+            .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
+    }
+
+    public Mono<DesignCreateResponse> createMockType2(DesignCreateCategoryRequest req) {
+        return planRepository.findByPlanId(req.getPlanId())
+            .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
+            .flatMap(plan -> {
+                Map<String, Object> designData = new HashMap<>();
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                try {
+                    Map<String, Object> allFields = objectMapper.convertValue(req, Map.class);
+                    allFields.remove("planId");
+                    designData = allFields;
+                } catch (Exception e) {
+                    return Mono.error(new RuntimeException("Failed to convert request to map", e));
+                }
+
+                String jsonContent;
+                try {
+                    jsonContent = objectMapper.writeValueAsString(designData);
+                } catch (Exception e) {
+                    return Mono.error(new RuntimeException("Failed to serialize design data", e));
+                }
+
+                plan.setPlanContent(jsonContent);
+                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
+                return planRepository.save(plan);
+            })
+            .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
+    }
+
 }

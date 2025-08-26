@@ -133,7 +133,7 @@ public class ChatService {
                 .doOnNext(sse -> {
                     String ev = sse.event();
                     String data = sse.data();
-                    if ("chunk".equals(ev)) {
+                    if ("message".equals(ev)) {
                         System.out.println("[GW->FE] OUT chatId=" + chatId + " event=chunk dataPreview=" + clip(data, 200));
                     } else {
                         System.out.println("[GW->FE] OUT chatId=" + chatId + " event=" + ev + " len=" + (data != null ? data.length() : 0));

@@ -70,6 +70,28 @@ public class DesignUploadController {
         });
     }
 
+    @PostMapping(value="/test", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<DesignCreateResponse>> createTest(@RequestBody Mono<JsonNode> bodyMono) {
+        return bodyMono.flatMap(root -> {
+            Kind kind = detectKind(root);
+            return switch (kind) {
+                case BRAND -> {
+                    DesignCreateBrandRequest dto = objectMapper.convertValue(root, DesignCreateBrandRequest.class);
+                    validate(dto);
+                    yield designService.createMockType1(dto).map(ResponseEntity::ok);
+                }
+                case CATEGORY -> {
+                    DesignCreateCategoryRequest dto = objectMapper.convertValue(root, DesignCreateCategoryRequest.class);
+                    validate(dto);
+                    yield designService.createMockType2(dto).map(ResponseEntity::ok);
+                }
+                case UNKNOWN -> Mono.error(new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "요청 바디 구조로 BRAND/CATEGORY를 판별할 수 없습니다."
+                ));
+            };
+        });
+    }
+
     private Kind detectKind(JsonNode root) {
         if (root == null || !root.isObject()) return Kind.UNKNOWN;
 
