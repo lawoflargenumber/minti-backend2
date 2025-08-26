@@ -41,8 +41,7 @@ public class PlanController {
 
     @PostMapping("/design/share")
     public Mono<Void> share(@Valid @RequestBody PlanDtos.ShareDesignRequest req) {
-        // No-op for now
-        return Mono.empty();
+        return planService.updatePlanShareStatus(req.planId);
     }
 
     @GetMapping("/design")

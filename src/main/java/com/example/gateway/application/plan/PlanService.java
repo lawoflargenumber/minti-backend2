@@ -108,4 +108,15 @@ public class PlanService {
                     return response;
                 });
     }
+
+    public Mono<Void> updatePlanShareStatus(String planId) {
+        return planRepository.findByPlanId(planId)
+                .switchIfEmpty(Mono.error(new RuntimeException("Plan not found")))
+                .flatMap(plan -> {
+                    plan.setShare(true);
+                    plan.setLastUpdatedAt(OffsetDateTime.now());
+                    return planRepository.save(plan);
+                })
+                .then();
+    }
 }
