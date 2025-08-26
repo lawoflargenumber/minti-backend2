@@ -65,6 +65,12 @@ public class PlanService {
                 try {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> parsed = objectMapper.readValue(plan.getPlanContent(), Map.class);
+                    // URL이 null이 아닐 때만 추가하거나, null일 때 빈 문자열로 설정
+                    if (plan.getUrl() != null) {
+                        parsed.put("url", plan.getUrl());
+                    } else {
+                        parsed.put("url", ""); 
+                    }
                     return Mono.just(parsed);
                 } catch (Exception e) {
                     return Mono.error(new RuntimeException("Failed to parse plan content", e));
