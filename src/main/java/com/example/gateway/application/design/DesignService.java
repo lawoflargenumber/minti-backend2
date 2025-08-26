@@ -43,6 +43,7 @@ public class DesignService {
                 }
 
                 plan.setPlanContent(jsonContent);
+                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
                 return planRepository.save(plan);
             })
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
@@ -71,6 +72,7 @@ public class DesignService {
                 }
 
                 plan.setPlanContent(jsonContent);
+                plan.setUrl("https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6");
                 return planRepository.save(plan);
             })
             .map(savedPlan -> new DesignCreateResponse(req.getPlanId(), "https://drive.google.com/uc?export=download&id=1j7ttxTtW5FCcKSwSQVCqwbp4_dFIGYt6"));
