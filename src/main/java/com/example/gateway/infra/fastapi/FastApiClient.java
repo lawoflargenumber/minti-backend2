@@ -76,16 +76,9 @@ public class FastApiClient {
                 .accept(MediaType.TEXT_EVENT_STREAM)
                 .body(BodyInserters.fromValue(payload))
                 .retrieve()
-                .bodyToFlux(ServerSentEvent.class)
-                .map(sse -> {
-                    String raw = String.valueOf(sse.data());         // 원문 data
-                    String evt = extractTypeOrDefault(raw, sse.event()); // data.type -> event 승격
-                    return ServerSentEvent.<String>builder()
-                            .event(evt)                              // <-- 여기서 명시적 이벤트 설정
-                            .id(sse.id())
-                            .data(raw)                               // data 원문 그대로 전달
-                            .build();
-                })
+                .bodyToFlux(String.class)  // 원본 문자열로 받기
+                .flatMap(this::parseSSELine)  // 수동 파싱
+                .filter(sse -> sse != null)
                 .doOnSubscribe(sub ->
                         System.out.println("[FA->GW] /chat/stream SUBSCRIBE chatId=" + chatId + " userId=" + userId))
                 .doOnNext(sse ->
@@ -136,6 +129,26 @@ public class FastApiClient {
         int cut = max;
         while (cut > 0 && (bytes[cut] & 0xC0) == 0x80) cut--; // 멀티바이트 안전
         return new String(bytes, 0, cut, StandardCharsets.UTF_8) + "...";
+    }
+
+    private Flux<ServerSentEvent<String>> parseSSELine(String line) {
+        try {
+            if (line.startsWith("data: ")) {
+                String dataJson = line.substring(6);  // "data: " 제거
+                if (dataJson.equals("[DONE]")) {
+                    return Flux.empty();  // 스트림 종료 신호
+                }
+                
+                String evt = extractTypeOrDefault(dataJson, null);
+                return Flux.just(ServerSentEvent.<String>builder()
+                        .event(evt)
+                        .data(dataJson)  // 원본 JSON 그대로 전달
+                        .build());
+            }
+        } catch (Exception e) {
+            System.err.println("SSE 파싱 오류: " + e.getMessage() + ", line: " + line);
+        }
+        return Flux.empty();
     }
 
     private static String extractTypeOrDefault(String dataJson, String fallbackEvent) {
