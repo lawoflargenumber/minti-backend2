@@ -9,12 +9,12 @@ data:
 
   APP_FASTAPI_BASE-URL: "http://fastapi-app-service:8000" 
   
-  APP_CORS_ALLOWED-ORIGINS: "http://localhost:3000/"  
+  APP_CORS_ALLOWED-ORIGINS: "https://frontend-rbl1.vercel.app"  
 
   APP_AUTH_AZURE_TENANT-ID: "a8b5b521-af3e-494c-9d73-78025baff26b"
   APP_AUTH_AZURE_CLIENT-ID: "e7b7ab7a-a770-413f-8053-069446fda0bb"
   
-  APP_AUTH_AZURE_REDIRECT-URI: "http://localhost:3000/auth/callback" 
+  APP_AUTH_AZURE_REDIRECT-URI: "https://frontend-rbl1.vercel.app/auth/callback" 
   
   APP_AUTH_AZURE_TOKEN-URI: "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/oauth2/v2.0/token"
   APP_AUTH_AZURE_ISSUER: "https://maretingaiagent.ciamlogin.com/a8b5b521-af3e-494c-9d73-78025baff26b/v2.0"
